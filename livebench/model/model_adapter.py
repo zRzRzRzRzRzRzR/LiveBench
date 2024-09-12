@@ -126,6 +126,11 @@ DEEPSEEK_MODEL_LIST = (
     "deepseek-chat",
 )
 
+GLM_MODEL_LIST = (
+    "glm-4-plus",
+    "glm-4",
+    "glm-4-0520",
+)
 NVIDIA_MODEL_LIST = (
     "nemotron-4-340b-instruct",
 )

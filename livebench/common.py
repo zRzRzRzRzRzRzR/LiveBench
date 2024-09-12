@@ -286,6 +286,36 @@ def chat_completion_nvidia(model, conv, temperature, max_tokens, api_dict=None):
 
     return output
 
+def chat_completion_glm(model, conv, temperature, max_tokens, api_dict=None):
+    if api_dict is not None and "api_key" in api_dict:
+        api_key = api_dict["api_key"]
+    else:
+        api_key = os.environ["GLM_API_KEY"]
+    output = API_ERROR_OUTPUT
+    for _ in range(API_MAX_RETRY):
+        try:
+            print('sleeping for 2 sec')
+            from openai import OpenAI
+            client = OpenAI(api_key=api_key, base_url="https://open.bigmodel.cn/api/paas/v4",timeout=1000)
+            messages = conv.to_openai_api_messages()
+            response = client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                n=1,
+                stream=False
+            )
+
+            output = response.choices[0].message.content
+            break
+        except Exception as e:
+            print(type(e), e)
+            time.sleep(API_RETRY_SLEEP)
+
+    return output
+
+
 def chat_completion_vertex(model, conv, temperature, max_tokens, api_dict=None, project_name="DEFAULT"):
     output = API_ERROR_OUTPUT
     for _ in range(API_MAX_RETRY):
